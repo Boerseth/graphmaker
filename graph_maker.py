@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import imageio
+from PIL import Image
 
 
 """
@@ -10,7 +11,164 @@ import imageio
         F I N D   C U R V E   F R O M   J P G
 ================================================================================
 """
-# TODO: Paste in this piece of code
+
+class CannotFindOutlineException(Exception):
+    pass
+
+class Walker:
+    """
+    Take a landscape with a binary `height`, and walk along its border.
+
+    Its two feet locations must be on separate sides of the border, placed
+    on either the same `x` or the same `y` coordinate at all times.
+
+    Steps
+    are made in lengths as big as the spread of the initial positions of
+    the feet.
+    
+    Turns are always right angled.
+    """
+    def __init__(self, height, left_foot, right_foot):
+        self.height = height
+        
+        self.left_foot = left_foot
+        self.right_foot = right_foot
+        self.left_start = left_foot
+        self.right_start = right_foot
+
+        spread = self.right_foot - self.left_foot
+        self.forward = np.array([-spread[1], spread[0]])
+        self.R_matrix = np.array([[0,1],[-1,0]]) # Rotation, pi/2 clockwise
+
+        self.has_returned = False
+        
+        assert spread[0] == 0 or spread[1] == 0
+        assert height(self.left_foot) != height(self.right_foot)
+
+    def get_feet_positions(self):
+        return [self.left_foot, self.right_foot]
+    
+    def get_midpoint(self):
+        return [(self.left_foot[0] + self.right_foot[0])/2,
+                (self.left_foot[1] + self.right_foot[1])/2]
+
+    def make_step(self):
+        if self.can_step_forth():
+            self.step_forth()
+        else:
+            self.turn()
+        self.check_if_returned()
+
+    def can_step_forth(self):
+        return self.left_foot_can_step() and self.right_foot_can_step()
+
+    def left_foot_can_step(self):
+        return (self.height(self.left_foot) == self.height(self.left_foot + self.forward))
+
+    def right_foot_can_step(self):
+        return (self.height(self.right_foot) == self.height(self.right_foot + self.forward))
+
+    def step_forth(self):
+        self.left_foot = self.left_foot + self.forward
+        self.right_foot = self.right_foot + self.forward
+
+    """
+    Turning right is the default, since the assumed walking direction is clockwise.
+    In the event that the edge touches itself at a pixel, e.g. like
+    
+                ######
+                ##  ##
+                  ####
+                 ^^
+    the walker turns right and walks along the peninsula's coast, and continues past 
+    the touching pixels onward to the left when it returns to the mainland.
+    """
+    def turn(self):
+        if self.must_turn_right():
+            self.turn_right()
+        else:
+            self.turn_left()
+
+    def must_turn_right(self):
+        return (self.height(self.right_foot + self.forward) == self.height(self.left_foot))
+    
+    def turn_right(self):
+        self.left_foot = self.right_foot + self.forward
+        self.forward = self.R_matrix.dot(self.forward)
+
+    def turn_left(self):
+        self.right_foot = self.left_foot + self.forward
+        self.forward = - self.R_matrix.dot(self.forward)
+
+    def check_if_returned(self):
+        left_returned = np.allclose(self.left_foot, self.left_start)
+        right_returned = np.allclose(self.right_foot, self.right_start)
+        self.has_returned = self.has_returned or (left_returned and right_returned)
+
+
+def find_first_diagonal_point_with_height_change(height, size):
+    diag = 1
+    while height([diag, diag]) == height([0,0]):
+        diag += 1
+        if diag > size-1:
+            raise CannotFindOutlineException()
+    return diag
+
+
+def clockwise_moving_starting_pair(height, diag):
+    outer_height = height([0,0])
+    diagonal_point = [diag, diag]
+    diagonal_point_prev = [diag-1, diag-1]
+    neighbour_point = [diag-1, diag]
+    if height(neighbour_point) == outer_height:
+        return (np.array(neighbour_point), np.array(diagonal_point))
+    else:
+        return (np.array(diagonal_point_prev), np.array(neighbour_point))
+
+
+def find_starting_point(height, size):
+    diag = find_first_diagonal_point_with_height_change(height, size)
+    return clockwise_moving_starting_pair(height, diag)
+
+
+def find_edge(height, size):
+    starting_point = find_starting_point(height, size)
+    walker = Walker(height, *starting_point)
+    edge = [walker.get_midpoint()]
+    while not walker.has_returned:
+        walker.make_step()
+        edge.append(walker.get_midpoint())
+    return edge
+
+
+def pixel_to_binary(pixel_value):
+    if pixel_value >= 128:
+        return 1
+    else:
+        return 0
+
+
+def get_edge_from_image(filename):
+    im = Image.open(filename).rotate(270)
+    im_array = np.array(im)
+    N,M = len(im_array[:,0]), len(im_array[0,:])
+    im_list = [[pixel_to_binary(im_array[n,m,0]) for m in range(M)]
+                                                    for n in range(N)]
+    height = lambda v: im_list[v[0]][v[1]]
+    size = max(N, M)
+    return find_edge(height, size)
+
+
+def cartesian_from_tuple_list(tuple_list):
+    x = [e[0] for e in tuple_list]
+    y = [e[1] for e in tuple_list]
+    return x, y
+
+
+def x_y_from_bitmap(filename):
+    edge = get_edge_from_image(filename)
+    x, y = cartestian_from_tuple_list(edge)
+    return x, y
 
 
 """
@@ -18,6 +176,9 @@ import imageio
         F I N D   C U R V E   F R O M   S V G
 ================================================================================
 """
+class PathNotInAbsoluteCoordinatesException(Exception)
+    pass
+
 def find_path_string(filepath):
     with open(filepath) as fp:
         line = fp.readline()
@@ -52,12 +213,14 @@ def curves_from_coords(coords):
         if len(coords[0]) == 1:
             curve_type = coords.pop(0)
         else:
-            if curve_type in ['m', 'M','l', 'L']:
+            if curve_type in ['M', 'L']:
                 curves.append([curve_type, coords.pop(0)])
-            elif curve_type in ['s', 'S']:
+            elif curve_type == 'S':
                 curves.append([curve_type, coords.pop(0), coords.pop(0)])
-            elif curve_type in ['c', 'C']:
+            elif curve_type == 'C':
                 curves.append([curve_type, coords.pop(0), coords.pop(0), coords.pop(0)])
+            elif curve_type in ['m', 'l', 's', 'c']:
+                raise PathNotInAbsoluteCoordinatesException()
             else:
                 raise Exception
     return curves
@@ -226,9 +389,27 @@ def number_to_scientific_latex(number):
         ret_string += " \\cdot 10"
     return ret_string
 
-print(number_to_scientific_latex(np.pi*10000))
 
+"""
+The separator is surprisingly intricate. Here is the justification:
 
+I want there to be a comma and ampersand between each coefficient,
+        ... a_n &= 1.23   , &    a_n+1 &= 4.56   , &   ...
+                           ^                      ^
+But there must not be any `&` after the `last` coefficient of a line.
+
+Also, if the `final` line of coefficients does not fill all collumns,
+say for the case of 3 columns and 4 coefficients,
+        a_1 &= 1.2  , &  a_2 &= 3.4  , &  a_3 &= 5.6 \\
+        a_4 &= 7.8  , &&&& \\
+the trailing ampersands must still be included.
+
+Finally, every line must be ended by a newline, _except_ if it is the
+final line of the `d`-coefficients.
+        d_1 &= 1.2  , &  d_2 &= 3.4  , &  d_3 &= 5.6 \\
+        d_4 &= 7.8  , &&&&
+        \end{align*}
+"""
 def separator(n, N, n_cols, letter):
     is_final = (n == N-1)
     is_last = (n % n_cols == n_cols-1)
@@ -236,16 +417,17 @@ def separator(n, N, n_cols, letter):
 
     if is_last:
         if is_final and is_d:
-            return ", \n"
+            return " \n"
         else:
             return ",\\\\ \n"
     else:
         if is_final:
-            ampersands = "&"*(2*(n_cols - 1 - (n%n_cols)))
-            if is_d:
-                return " " + ampersands + " \n"
-            else:
-                return ", " + ampersands + " \\\\ \n"
+            trailing_ampersands = "&"*(2*(n_cols - 1 - (n%n_cols)))
+            ret_string = ""
+            ret_string += " " if is_d else ", "
+            ret_string += trailing_ampersands
+            ret_string += " \n" if is_d else " \\\\ \n"
+            return ret_string
         else:
             return ", & "
     
@@ -253,14 +435,18 @@ def separator(n, N, n_cols, letter):
 def latex_simplified_formula(a,b,c,d,n_cols):
     assert len(a) == len(b) and len(a) == len(c) and len(a) == len(d)
     N = len(a)
+    begin_align = "\\begin{align*}\n"
+    end_align =  "\\end{align*}\n"
+    empty_line = "&"*(2*n_cols - 1) + " \\\\ \n"
+    
     ret_string = ""
-    ret_string += "\\begin{align*}\n"
-    ret_string += "x(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ a_n \\cos(2n\\pi t) + b_n \\sin(2n\\pi t) \\Big] \\\\ \n".format(N)
-    ret_string += "y(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ c_n \\cos(2n\\pi t) + d_n \\sin(2n\\pi t) \\Big] \n".format(N)
-    ret_string += "\\end{align*}\n"
+    ret_string += begin_align
+    ret_string += "x(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ a_n \\cos(2n\\pi t) + b_n \\sin(2n\\pi t) \\Big]\\\\ \n".format(N)
+    ret_string += "y(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ c_n \\cos(2n\\pi t) + d_n \\sin(2n\\pi t) \\Big]\n".format(N)
+    ret_string += end_align
     ret_string += "\n"
 
-    ret_string += "\\begin{align*}\n"
+    ret_string += begin_align
     for letter, coeff_list in [('a', a), ('b', b), ('c', c), ('d', d)]:
         for n in range(N):
             ret_string += "{}_{{ {} }} &= ".format(letter, n+1)
@@ -268,8 +454,8 @@ def latex_simplified_formula(a,b,c,d,n_cols):
             
             ret_string += separator(n, N, n_cols, letter)
         if letter != 'd':
-            ret_string += "&"*(2*n_cols - 1) + " \\\\ \n"
-    ret_string += "\\end{align*}\n"
+            ret_string += empty_line
+    ret_string += end_align
     return ret_string
     
 
@@ -278,16 +464,19 @@ def latex_complete_formula(a,b,c,d,n_cols, n_rows):
     assert len(b) == N
     assert len(c) == N
     assert len(d) == N
+    
+    begin_align = "\\begin{align*}\n"
+    end_align =  "\\end{align*}\n"
+    empty_line = "& \\\\ \n"
 
-    ret_string = "\\begin{align*}\n"
+    ret_string = begin_align
     ret_string += "  t \\in \\mathbb{R}\n"
-    ret_string += "\\end{align*}\n"
+    ret_string += end_align
     ret_string += "\n"
 
-    visual_row_count = 3
+    visual_row_count = 3  # Not used for anything yet...
 
-    ret_string += "\\begin{align*}\n"
-    
+    ret_string += begin_align
     ret_string += "  x(t) &= "
     for n in range(N):
         if (n % n_cols == 0) and (n > 0):
@@ -308,7 +497,7 @@ def latex_complete_formula(a,b,c,d,n_cols, n_rows):
             ret_string += "\\\\ \n  "
             visual_row_count += 1
 
-    ret_string += "& \\\\ \n"
+    ret_string += empty_line
 
     ret_string += "y(t) &= "
     for n in range(N):
@@ -326,14 +515,14 @@ def latex_complete_formula(a,b,c,d,n_cols, n_rows):
         ret_string += number_to_scientific_latex(d[n])
         ret_string += " \\sin ( {} \\cdot 2 \\pi t ) ".format(n + 1)
         
-        if (n == N-1) or (n % n_cols == n_cols-1):
-            if not (n == N-1):
-                ret_string += "\\\\ \n  "
-                visual_row_count += 1
-            else:
-                ret_string += " \n"
-                visual_row_count += 1
-    ret_string += "\\end{align*}\n"
+        if (n == N-1):
+            ret_string += " \n"
+            visual_row_count += 1
+        elif (n % n_cols == n_cols-1):
+            ret_string += "\\\\ \n  "
+            visual_row_count += 1
+                
+    ret_string += end_align
     return ret_string
 
 
@@ -347,8 +536,11 @@ if __name__ == "__main__":
     filetype = filepath[-3:]
     if filetype == 'svg':
         x, y = x_y_from_svg(filepath)
-    elif filetype in ['jpg', 'jpeg']:
+    elif filetype in ['png', 'jpg', 'peg']:
         x, y = x_y_from_jpg(filepath)
+    else:
+        print('File format not recognised!')
+        print('Rename file (.svg, .png, .jpg, .jpeg), or provide different format.')
     
     N = eval(sys.argv[2])
     M = len(x) # == len(y)
