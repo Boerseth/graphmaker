@@ -24,7 +24,7 @@ where
 ### PNG - Drawing the curve in MS-Paint
 You can draw your curve in MS-Paint and use the image file with this script. Here is an example of such a drawing:
 
-[Hybrida](/image.png)
+![Hybrida](/image.png)
 
 Notice that the image is in black and white. The curve is represented by the border between the two colours.
 
@@ -34,7 +34,7 @@ $ python3 graph_maker.py image.png 100
 ```
 The result is the following graph, along with latex-code in separate files.
 
-[Approximated Hybrida](/image.jpg)
+![Approximated Hybrida](/image.jpg)
 
 Here is a detailed guide on drawing curves in this way:
 1. First, draw the curve in black on a white background. Make sure there is no antialiasing (gray colours mixed in to make the drawing look more smooth).
