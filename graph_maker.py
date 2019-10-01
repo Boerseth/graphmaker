@@ -15,6 +15,7 @@ from PIL import Image
 class CannotFindOutlineException(Exception):
     pass
 
+
 class Walker:
     """
     Take a landscape with a binary `height`, and walk along its border.
@@ -165,9 +166,9 @@ def cartesian_from_tuple_list(tuple_list):
     return x, y
 
 
-def x_y_from_bitmap(filename):
+def x_y_from_png(filename):
     edge = get_edge_from_image(filename)
-    x, y = cartestian_from_tuple_list(edge)
+    x, y = cartesian_from_tuple_list(edge)
     return x, y
 
 
@@ -176,23 +177,36 @@ def x_y_from_bitmap(filename):
         F I N D   C U R V E   F R O M   S V G
 ================================================================================
 """
-class PathNotInAbsoluteCoordinatesException(Exception)
+class PathNotFoundException(Exception):
     pass
 
-def find_path_string(filepath):
-    with open(filepath) as fp:
-        line = fp.readline()
-        cnt = 1
-        while line:
-            if line.lstrip()[:3] == 'd="': # Look for the path string, which starts with 'd="'
-                return line.lstrip()
-            line = fp.readline()
-            cnt += 1
+
+class PathNotInAbsoluteCoordinatesException(Exception):
+    pass
 
 
-def curves_from_coords(coords):
+def find_path_string(filename):
     """
-    arg: coords
+    Search for the line in the svg-file that describes the path. It is of the
+    form
+                d="M 1.2,2.3 C 3.4,4.5 5.6,6.7 7.8,8.9 C  ...  "
+    and so the function looks for lines that start with 'd="'.
+    
+    arg: filename - name of svg-file
+    ret: path string
+    """
+    with open(filename) as f:
+        line = f.readline()
+        while line:
+            if line.lstrip()[:3] == 'd="': # Path string starts with 'd="'
+                return line.lstrip()
+            line = f.readline()
+    raise PathNotFoundException()
+
+
+def extract_control_points(path_string_words):
+    """
+    arg: path_string_words
                 These are the words of the path string, which are either path types,
                         'M', 'L', 'S', 'C'
                 or coordinate pairs in string form.
@@ -207,23 +221,29 @@ def curves_from_coords(coords):
                 The first control point 'x0,y0' is always the last control point of the
                 previous curve.
     """
-    curves = []
+    control_points = []
     curve_type = 'M'
-    while len(coords) != 0:
-        if len(coords[0]) == 1:
-            curve_type = coords.pop(0)
+    while len(path_string_words) != 0:
+        if len(path_string_words[0]) == 1:
+            curve_type = path_string_words.pop(0)
         else:
             if curve_type in ['M', 'L']:
-                curves.append([curve_type, coords.pop(0)])
+                P1 = path_string_words.pop(0)
+                control_points.append([curve_type, P1])
             elif curve_type == 'S':
-                curves.append([curve_type, coords.pop(0), coords.pop(0)])
+                P1 = path_string_words.pop(0)
+                P2 = path_string_words.pop(0)
+                control_points.append([curve_type, P1, P2])
             elif curve_type == 'C':
-                curves.append([curve_type, coords.pop(0), coords.pop(0), coords.pop(0)])
+                P1 = path_string_words.pop(0)
+                P2 = path_string_words.pop(0)
+                P3 = path_string_words.pop(0)
+                control_points.append([curve_type, P1, P2, P3])
             elif curve_type in ['m', 'l', 's', 'c']:
                 raise PathNotInAbsoluteCoordinatesException()
             else:
                 raise Exception
-    return curves
+    return control_points
 
 
 def bezier_points_from_svg_curves(curve_list):
@@ -300,10 +320,10 @@ def x_y_from_svg(filename):
 
     Each Bezier-curve is sampled at 100-points, equidistant in the parameter t.
     """
-    line = find_path_string(filename)[3:-2]
-    linelist = line.split()
-    curves = curves_from_coords(linelist)
-    bezier_points = bezier_points_from_svg_curves(curves)
+    path_string = find_path_string(filename)[3:-2]
+    path_string_words = path_string.split()
+    control_points = extract_control_points(path_string_words)
+    bezier_points = bezier_points_from_svg_curves(control_points)
     mybez = Bezier()
     for bezier in bezier_points[1:]: # Skip starting point (M, (x,y))
         mybez.add_curve(bezier)
@@ -327,7 +347,7 @@ class Fourier_matrix:
         self.COS = np.array([[np.cos(n * m * 2 * np.pi / M) 
             for m in range(M)]
             for n in range(1, N+1)])
-        self.SIN = np.array([[np.sin(n * m * 2* np.pi / M) 
+        self.SIN = np.array([[np.sin(n * m * 2 * np.pi / M) 
             for m in range(M)]
             for n in range(1, N+1)])
         self.COST = self.COS.T
@@ -441,8 +461,10 @@ def latex_simplified_formula(a,b,c,d,n_cols):
     
     ret_string = ""
     ret_string += begin_align
-    ret_string += "x(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ a_n \\cos(2n\\pi t) + b_n \\sin(2n\\pi t) \\Big]\\\\ \n".format(N)
-    ret_string += "y(t) &= \\sum\\limits_{{n=1}}^{{ {} }} \\Big[ c_n \\cos(2n\\pi t) + d_n \\sin(2n\\pi t) \\Big]\n".format(N)
+    ret_string += "x(t) &= \\sum\\limits_{{n=1}}^{{ {} }} ".format(N)
+    ret_string += "\\Big[a_n \\cos(2n\\pi t) + b_n \\sin(2n\\pi t) \\Big]\\\\ \n"
+    ret_string += "y(t) &= \\sum\\limits_{{n=1}}^{{ {} }} ".format(N)
+    ret_string += "\\Big[c_n \\cos(2n\\pi t) + d_n \\sin(2n\\pi t) \\Big]\n"
     ret_string += end_align
     ret_string += "\n"
 
@@ -532,15 +554,16 @@ def latex_complete_formula(a,b,c,d,n_cols, n_rows):
 ================================================================================
 """
 if __name__ == "__main__":
+    
     filepath = sys.argv[1]
     filetype = filepath[-3:]
     if filetype == 'svg':
         x, y = x_y_from_svg(filepath)
-    elif filetype in ['png', 'jpg', 'peg']:
-        x, y = x_y_from_jpg(filepath)
+    elif filetype == 'png':
+        x, y = x_y_from_png(filepath)
     else:
         print('File format not recognised!')
-        print('Rename file (.svg, .png, .jpg, .jpeg), or provide different format.')
+        print('Rename file (.svg, .png), or convert to the correct format and try again.')
     
     N = eval(sys.argv[2])
     M = len(x) # == len(y)
@@ -563,13 +586,12 @@ if __name__ == "__main__":
     y_appr = my_fo.make_approximation(c, d, N)
 
     # Make plot
-    plt.figure(figsize=(15,15))
-    plt.axis((*x_scope, *y_scope))
-    plt.axis("scaled")
-    plt.plot(x_appr, y_appr)
+    plt.figure(figsize=(20,15))
+    plt.axis("equal")
+    plt.plot(list(x_appr), list(y_appr))
     figurename = "{}.jpg".format(filepath[:-4])
     plt.savefig(figurename)
-    plt.close()
+    #plt.close()
     
     latex_simplified = latex_simplified_formula(a,b,c,d,4)
     latex_complete = latex_complete_formula(a,b,c,d,2, 10)
