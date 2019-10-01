@@ -52,7 +52,7 @@ Here is how you might go about doing this:
 1. Find an image that you like and want to make a graph of
 2. Open it in InkScape
 
-	<img src="./example_pictures/SVG-1.png" width="400" align="center'>
+	<p align="center"><img src="./example_pictures/SVG-1.png" width="400"></p>
 	
 3. Use the Bezier tool to trace out a curve on top of the image.
 
