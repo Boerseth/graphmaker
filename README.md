@@ -60,9 +60,6 @@ Here is how you might go about doing this:
 	2. Choose `Absolute`
 8. Save the curve as an svg-file.
 
-<img src="./example_pictures/SVG-1.png" width="100">
-<img src="./example_pictures/SVG-1.png" width="100">
-<img src="./example_pictures/SVG-1.png" width="100">
-<img src="./example_pictures/SVG-1.png" width="100">
+<img src="./example_pictures/SVG-1.png" width="200"><img src="./example_pictures/SVG-1.png" width="200"><img src="./example_pictures/SVG-1.png" width="200"><img src="./example_pictures/SVG-1.png" width="200">
 
 Now, simply run the script as described above with the filename you chose for the svg file.
