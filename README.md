@@ -76,7 +76,7 @@ Now, simply run the script as described above with the filename you chose for th
 
 ## LaTeX code
 The program produces two files containing LaTeX code describing the graph mathematically. The two files,
-1. `lsimp.tex`: Produces a simpler set of equations that will generate the graph
-1. `lcomplete.tex`: Produces the complete equations that generate the graph, without relying on the Sigma-notation for sums.
+1. `lsimp.tex`: Produces a simpler set of equations that will generate the graph (left below)
+1. `lcomplete.tex`: Produces the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
 
 <img src="./example_pictures/LaTeX-simple.png" height="300"><img src="./example_pictures/LaTeX-complete.png" height="300">
