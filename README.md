@@ -52,23 +52,23 @@ Here is how you might go about doing this:
 1. Find an image that you like and want to make a graph of
 2. Open it in InkScape
 
-	<p align="center"><img src="./example_pictures/SVG-1.png" width="400"></p>
+	<img src="./example_pictures/SVG-1.png" width="500">
 	
 3. Use the Bezier tool to trace out a curve on top of the image.
 
-	<img src="./example_pictures/SVG-2.png" width="400">
+	<img src="./example_pictures/SVG-2.png" width="500">
 	
 4. Make sure the curve you are making is connected! It has to be made using just one path, and also has to return to the starting point in the end.
 5. When you are done drawing the curve and close it off, it should change thickness and turn black.
 6. You can now delete the picture you used as a guide from the drawing board, leaving the curve still there.
 
-	<img src="./example_pictures/SVG-3.png" width="400">
+	<img src="./example_pictures/SVG-3.png" width="500">
 	
 7. Before saving the curve, make sure that InkScape is set up to save coordinates as absolute, not relative:
 	1. Go to `Edit -> Preferences -> SVG-output -> Path data -> Path string format`
 	2. Choose `Absolute`
 	
-	<img src="./example_pictures/SVG-4.png" width="400">
+	<img src="./example_pictures/SVG-4.png" width="500">
 	
 8. Save the curve as an svg-file.
 
