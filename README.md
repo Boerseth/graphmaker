@@ -36,6 +36,8 @@ The result is the following graph, along with latex-code in separate files.
 
 ![Approximated Hybrida](/hybrida.jpg)
 
+The result looks goofy in this case, but a quick fix is to increase the order from 100 to e.g. 300.
+
 Here is a detailed guide on drawing curves in this way:
 1. First, draw the curve in black on a white background. Make sure there is no antialiasing (gray colours mixed in to make the drawing look more smooth).
 2. Make sure the curve does not intersect itself! It must also be closed and connected, that is you cannot lift the pencil and have to return to the starting point.
@@ -57,5 +59,9 @@ Here is how you might go about doing this:
 	1. Go to `Edit -> Preferences -> SVG-output -> Path data -> Path string format`
 	2. Choose `Absolute`
 8. Save the curve as an svg-file.
+
+![SVG-1](/example_pictures/SVG-1.png | width = 100)
+![SVG-2](/example_pictures/SVG-2.png | width = 100)
+![SVG-3](/example_pictures/SVG-3.png | width = 100)
 
 Now, simply run the script as described above with the filename you chose for the svg file.
