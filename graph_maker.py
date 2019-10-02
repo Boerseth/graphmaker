@@ -457,6 +457,35 @@ def latex_simplified_formula(a,b,c,d,n_cols):
     N = len(a)
     begin_align = "\\begin{align*}\n"
     end_align =  "\\end{align*}\n"
+    
+    ret_string = ""
+    ret_string += begin_align
+    ret_string += "x(t) &= \\sum\\limits_{{n=1}}^{{ {} }} ".format(N)
+    ret_string += "\\Big[a_n \\cos(2n\\pi t) + b_n \\sin(2n\\pi t) \\Big]\\\\ \n"
+    ret_string += "y(t) &= \\sum\\limits_{{n=1}}^{{ {} }} ".format(N)
+    ret_string += "\\Big[c_n \\cos(2n\\pi t) + d_n \\sin(2n\\pi t) \\Big]\n"
+    ret_string += end_align
+    ret_string += "\n"
+
+    ret_string += begin_align
+    for n in range(N):
+        ret_string += '  '
+        for letter, coeff in [('a', a[n]), ('b', b[n]), ('c', c[n]), ('d', d[n])]:
+            ret_string += "{}_{{ {} }} &= ".format(letter, n+1)
+            ret_string += number_to_scientific_latex(coeff)
+            if letter != 'd':
+                ret_string += ', & '
+            else:
+                ret_string += ', \\\\ \n' if (n != N-1) else '\n'
+    ret_string += end_align
+    return ret_string
+    
+
+def latex_old_simplified_formula(a,b,c,d,n_cols):
+    assert len(a) == len(b) and len(a) == len(c) and len(a) == len(d)
+    N = len(a)
+    begin_align = "\\begin{align*}\n"
+    end_align =  "\\end{align*}\n"
     empty_line = "&"*(2*n_cols - 1) + " \\\\ \n"
     
     ret_string = ""
@@ -591,7 +620,6 @@ if __name__ == "__main__":
     plt.plot(list(x_appr), list(y_appr))
     figurename = "{}.jpg".format(filepath[:-4])
     plt.savefig(figurename)
-    #plt.close()
     
     latex_simplified = latex_simplified_formula(a,b,c,d,4)
     latex_complete = latex_complete_formula(a,b,c,d,2, 10)
