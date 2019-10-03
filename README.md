@@ -94,11 +94,11 @@ The program produces two files containing LaTeX code describing the graph mathem
 
 ## Future work
 The plan to fix the resolution dependence for png input is as follows:
-* Make a linear spline *s*(*t*) out of the path generated from the image, 0 ≤ *t* < 1
+* Make a linear spline *s*(*t*) out of the path generated from the image, <a href="https://www.codecogs.com/eqnedit.php?latex=0&space;\leq&space;t&space;<&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?0&space;\leq&space;t&space;<&space;1" title="0 \leq t < 1" /></a>
 * Sample the spline at some low rate, like at *n*=1000 equidistant points
-* Make another linear spline *s_n*(*t*) form these *n* samples, and compute the error *e* by
+* Make another linear spline <a href="https://www.codecogs.com/eqnedit.php?latex=s_n(t)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_n(t)" title="s_n(t)" /></a> form these *n* samples, and compute the error *e* by
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" target="_blank"><img src="https://latex.codecogs.com/gif.latex?e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" title="e = \int\limits_0^1 \left[ s(t) - s_n(t) \right]^2 ~ \mathrm{d}t" /></a>
 
-	* If *e* is sufficiently small (to be defined), accept the sample of $n$ points that was made
-	* Else, increase *n* by some factor and try again.
+ * If *e* is sufficiently small (to be defined), accept the sample of $n$ points that was made
+ * Else, increase *n* by some factor and try again.
