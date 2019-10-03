@@ -1,17 +1,21 @@
 # Graph-maker
 This program takes an image of a curve, either svg or png, and approximates it by Fourier series. The program outputs a picture of the graph and the equations of the approximation in LaTeX code. 
 
+
+
 ## Getting started
-Alls ya need is the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them in a folder with the image you want to graphify, and follow the below instructions.
+The parts of this repo that do all the work are the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them in a folder with the image you want to graphify, and follow the below instructions.
 
 The rest of the files you can safely delete.
 
 ### Prerequisites
-You will need to have Python and the packages Numpy, matplotlib, and PIL installed in order to run the python script.
+Alls ya need to run the script is to have Python installed along with the packages Numpy, matplotlib, and PIL.
 
-Paths saved in svg-format can be drawn with programs like InkScape.
+Curves drawn in png-files can be made using for instance MS-Paint, GIMP, or PhotoShop.
 
-Curves drawn in png-files can be made using for instance MS-Paint or PS.
+Paths saved in svg-format can be drawn with vector-graphics programs like InkScape.
+
+
 
 ## Typical usage
 Run the script in terminal with Python 3 as follows,
@@ -22,6 +26,8 @@ where
  * `image.png` is the name of the image being made into a graph
  * `output.png` is the name you want for the output file
  * `100` is the number of terms to be used in the Fourier series
+
+
 
 ## Requirements on the image files
 
@@ -84,6 +90,8 @@ Here is how you might go about doing this:
 
 Now, simply run the script as described above with the filename you chose for the svg file.
 
+
+
 ## LaTeX code
 The program produces two files containing LaTeX code describing the graph mathematically. The two files,
 1. `latex_simple.tex`: contains code for a simpler set of equations that will generate the graph (left below)
@@ -92,11 +100,12 @@ The program produces two files containing LaTeX code describing the graph mathem
 <img src="./example_pictures/LaTeX-simple.png" height="300"><img src="./example_pictures/LaTeX-complete.png" height="300">
 
 
+
 ## Future work
 The plan to fix the resolution dependence for png input is as follows:
 * Make a linear spline <a href="https://www.codecogs.com/eqnedit.php?latex=s(t)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s(t)" title="s(t)" /></a> out of the path generated from the image, <a href="https://www.codecogs.com/eqnedit.php?latex=0&space;\leq&space;t&space;<&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?0&space;\leq&space;t&space;<&space;1" title="0 \leq t < 1" /></a>
 * Sample the spline at some low rate, like at *n*=1000 equidistant points
-* Make another linear spline <a href="https://www.codecogs.com/eqnedit.php?latex=s_n(t)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_n(t)" title="s_n(t)" /></a> form these *n* samples, and compute the error *e* by
+* Make another linear spline <a href="https://www.codecogs.com/eqnedit.php?latex=s_n(t)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_n(t)" title="s_n(t)" /></a> from these *n* samples, and compute the error *e* by
 
 <div align="center"><a href="https://www.codecogs.com/eqnedit.php?latex=e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" target="_blank" ><img src="https://latex.codecogs.com/gif.latex?e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" title="e = \int\limits_0^1 \left[ s(t) - s_n(t) \right]^2 ~ \mathrm{d}t" /></a></div>
 
