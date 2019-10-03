@@ -4,12 +4,8 @@ class Fourier_matrix:
     def __init__(self, N, M):
         self.N = N
         self.M = M
-        self.COS = np.array([[np.cos(n * m * 2 * np.pi / M) 
-            for m in range(M)]
-            for n in range(1, N+1)])
-        self.SIN = np.array([[np.sin(n * m * 2 * np.pi / M) 
-            for m in range(M)]
-            for n in range(1, N+1)])
+        self.COS = np.fromfunction(lambda n, m: np.cos((n+1) * m * 2 * np.pi / M), (N,M), dtype=float)
+        self.SIN = np.fromfunction(lambda n, m: np.sin((n+1) * m * 2 * np.pi / M), (N,M), dtype=float)
         self.COST = self.COS.T
         self.SINT = self.SIN.T
     
