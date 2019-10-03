@@ -2,7 +2,7 @@
 This program takes an image of a curve, either svg or png, and approximates it by Fourier series. The program outputs a picture of the graph and the equations of the approximation in LaTeX code. 
 
 ## Getting started
-Alls ya need is the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them with a folder with the image you want to graphify, and follow the below instructions.
+Alls ya need is the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them in a folder with the image you want to graphify, and follow the below instructions.
 
 The rest of the files you can safely delete.
 
