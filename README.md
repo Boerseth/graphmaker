@@ -30,7 +30,7 @@ Notice that the image is in black and white. The curve is represented by the bor
 
 After running the script on this file in terminal, as
 ```
-$ python3 graph_maker.py image.png 100
+$ python3 graph_maker.py hybrida.png 100
 ```
 The result is the following graph, along with latex-code in separate files.
 
@@ -76,7 +76,7 @@ Now, simply run the script as described above with the filename you chose for th
 
 ## LaTeX code
 The program produces two files containing LaTeX code describing the graph mathematically. The two files,
-1. `lsimp.tex`: Produces a simpler set of equations that will generate the graph (left below)
-1. `lcomp.tex`: Produces the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
+1. `lsimp.tex`: contains code for a simpler set of equations that will generate the graph (left below)
+1. `lcomp.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
 
 <img src="./example_pictures/LaTeX-simple.png" height="300"><img src="./example_pictures/LaTeX-complete.png" height="300">
