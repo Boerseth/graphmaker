@@ -96,6 +96,9 @@ The program produces two files containing LaTeX code describing the graph mathem
 The plan to fix the resolution dependence for png input is as follows:
 * Make a linear spline *s*(*t*) out of the path generated from the image, 0 ≤ *t* < 1
 * Sample the spline at some low rate, like at *n*=1000 equidistant points
-* Make another linear spline *s_n*(*t*) form these *n* samples, and compute the error *e* = ∫(*s-s_n*)²d*t*
+* Make another linear spline *s_n*(*t*) form these *n* samples, and compute the error *e* by
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" target="_blank"><img src="https://latex.codecogs.com/gif.latex?e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" title="e = \int\limits_0^1 \left[ s(t) - s_n(t) \right]^2 ~ \mathrm{d}t" /></a>
+
 	* If *e* is sufficiently small (to be defined), accept the sample of $n$ points that was made
 	* Else, increase *n* by some factor and try again.
