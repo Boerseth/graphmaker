@@ -142,21 +142,14 @@ def pixel_to_binary(pixel_value):
 
 
 def get_edge_from_image(filename):
-    im = Image.open(filename).rotate(270)
-    im_array = np.array(im)
-    im.close()
+    with Image.open(filename).rotate(270) as im:
+        im_array = np.array(im)
     N,M = len(im_array[:,0]), len(im_array[0,:])
     im_list = [[pixel_to_binary(im_array[n,m,0]) for m in range(M)]
                                                     for n in range(N)]
     height = lambda v: im_list[v[0]][v[1]]
-    size = max(N, M)
+    size = min(N, M)
     return find_edge(height, size)
-
-
-def cartesian_from_tuple_list(tuple_list):
-    x = [e[0] for e in tuple_list]
-    y = [e[1] for e in tuple_list]
-    return x, y
 
 
 def x_y_from_png(filename):

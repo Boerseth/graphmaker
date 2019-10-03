@@ -28,9 +28,12 @@ def make_graph(filepath, output_filepath, order):
 
     x = np.array(x)
     y = np.array(y)
+    
+    # Subtract the average: removes 0th cos coeff, and centers graph around origo
     x = x - sum(x)/M
     y = y - sum(y)/M
 
+    # These are no longer used, but may turn out useful
     x_scope = (min(x)-20, max(x)+20)
     y_scope = (min(y)-20, max(y)+20)
     scope = (min(min(x), min(y)) - 20,
@@ -38,10 +41,10 @@ def make_graph(filepath, output_filepath, order):
 
     print('(2/6) Computing the Fourier transform matrix (this could take some time)', flush=True)
     fourier = Fourier_matrix(N, M)
+    
     print('(3/6) Finding Fourier coefficients for x(t) and y(t)', flush=True)
     a, b = fourier.make_coeffs(x)
     c, d = fourier.make_coeffs(y)
-
 
     print('(4/6) Computing Fourier approximation for x(t) and y(t)', flush=True)
     x_appr = fourier.make_approximation(a, b, N)

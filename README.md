@@ -40,7 +40,7 @@ The result is the following graph, along with latex-code in separate files.
 
 ![Approximated Hybrida](/hybrida_graph.png)
 
-The result looks goofy in this case, but a quick fix is to increase the order from 100 to e.g. 300.
+The result looks goofy in this case, but a quick fix is to increase the order from 100, e.g. to 300.
 
 Here is a detailed guide on drawing curves in this way:
 1. First, draw the curve in black on a white background. Make sure there is no antialiasing (gray colours mixed in to make the drawing look more smooth).
@@ -48,6 +48,12 @@ Here is a detailed guide on drawing curves in this way:
 3. Once you are done drawing the curve, use the paint-bucket to fill in the outside of the curve with black colour.
 
 After this you should have a black/white picture that is black on the outside of the curve and white on the inside, with no islands of either colour in the other region. There should also not be any grey-tones on the border between them. If you see that there are, try using other editing software to colour these pixels either white or black.
+
+**NOTE ON PERFORMANCE**: Try not to use a picture with too high resolution. Right now, the program treats the path as x- and y-coordinates in two separate vectors, one value in each for every pixel along the border. The program finds their representation in a cosine/sine basis, using two N-by-M matrices containing cosine- and sine-values. Computing the value of this matrix can become costly if M (the length of the x- and y-vector) becomes huge, i.e. if the resolution is high.
+
+**BOTTOM LINE**: If the resolution is high, the number of pixels along the border will be large, making the x- and y-vectors long, which in turn increases the computation time.
+
+There is a fix for this planned, but for the moment, just scale down the image. Something of the order 500x500 - 1000x1000 should be fine.
 
 ### SVG - Drawing a path in InkScape
 This will perhaps lead to the most elegant graphs. Using svg-paths is not as restrictive as the black/white drawings detailed above, because there is nothing preventing your graph from intersecting itself in this case. The curve must still end up at its starting point and be one connected path, but other than that there aren't many limitations.
@@ -84,3 +90,12 @@ The program produces two files containing LaTeX code describing the graph mathem
 1. `latex_complete.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
 
 <img src="./example_pictures/LaTeX-simple.png" height="300"><img src="./example_pictures/LaTeX-complete.png" height="300">
+
+
+## Future work
+The plan to fix the resolution dependence for png input is as follows:
+* Make a linear spline *s*(*t*) out of the path generated from the image, 0 ≤ *t* < 1
+* Sample the spline at some low rate, like at *n*=1000 equidistant points
+* Make another linear spline *s_n*(*t*), and check if the error *e* = ∫(*s-s_n*)²d*t* is too large
+.* If *e* is sufficiently small (to be defined), accept the sample of $n$ points.
+.* Else, increase *n* by some factor and try again.
