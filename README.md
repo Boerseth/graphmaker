@@ -98,7 +98,7 @@ The plan to fix the resolution dependence for png input is as follows:
 * Sample the spline at some low rate, like at *n*=1000 equidistant points
 * Make another linear spline <a href="https://www.codecogs.com/eqnedit.php?latex=s_n(t)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?s_n(t)" title="s_n(t)" /></a> form these *n* samples, and compute the error *e* by
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" target="_blank" align="center"><img src="https://latex.codecogs.com/gif.latex?e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" title="e = \int\limits_0^1 \left[ s(t) - s_n(t) \right]^2 ~ \mathrm{d}t" /></a>
+<div align="center"><a href="https://www.codecogs.com/eqnedit.php?latex=e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" target="_blank" ><img src="https://latex.codecogs.com/gif.latex?e&space;=&space;\int\limits_0^1&space;\left[&space;s(t)&space;-&space;s_n(t)&space;\right]^2&space;~&space;\mathrm{d}t" title="e = \int\limits_0^1 \left[ s(t) - s_n(t) \right]^2 ~ \mathrm{d}t" /></a></div>
 
  * If *e* is sufficiently small (to be defined), accept the sample of *n* points that was made
  * Else, increase *n* by some factor and try again.
