@@ -2,7 +2,6 @@ import sys
 
 import numpy as np
 import matplotlib.pyplot as plt
-import imageio
 from PIL import Image
 
 class CannotFindOutlineException(Exception):
@@ -145,6 +144,7 @@ def pixel_to_binary(pixel_value):
 def get_edge_from_image(filename):
     im = Image.open(filename).rotate(270)
     im_array = np.array(im)
+    im.close()
     N,M = len(im_array[:,0]), len(im_array[0,:])
     im_list = [[pixel_to_binary(im_array[n,m,0]) for m in range(M)]
                                                     for n in range(N)]
@@ -161,5 +161,6 @@ def cartesian_from_tuple_list(tuple_list):
 
 def x_y_from_png(filename):
     edge = get_edge_from_image(filename)
-    x, y = cartesian_from_tuple_list(edge)
+    x = [e[0] for e in edge]
+    y = [e[1] for e in edge]
     return x, y
