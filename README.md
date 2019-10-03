@@ -16,10 +16,11 @@ Curves drawn in png-files can be made using for instance MS-Paint or PS.
 ## Typical usage
 Run the script in terminal with Python 3 as follows,
 ```
-$ python3 graph_maker.py image.png 100
+$ python3 graph_maker.py image.png output.png 100
 ```
 where
  * `image.png` is the name of the image being made into a graph
+ * `output.png` is the name you want for the output file
  * `100` is the number of terms to be used in the Fourier series
 
 ## Requirements on the image files
@@ -33,11 +34,11 @@ Notice that the image is in black and white. The curve is represented by the bor
 
 After running the script on this file in terminal, as
 ```
-$ python3 graph_maker.py hybrida.png 100
+$ python3 graph_maker.py hybrida.png hybrida_graph.png 100
 ```
 The result is the following graph, along with latex-code in separate files.
 
-![Approximated Hybrida](/hybrida.jpg)
+![Approximated Hybrida](/hybrida_graph.png)
 
 The result looks goofy in this case, but a quick fix is to increase the order from 100 to e.g. 300.
 
