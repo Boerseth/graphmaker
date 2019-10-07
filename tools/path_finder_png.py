@@ -77,13 +77,13 @@ class Walker:
     the touching pixels onward to the left when it returns to the mainland.
     """
     def turn(self):
-        if self.must_turn_right():
+        if self.can_turn_right():
             self.turn_right()
         else:
             self.turn_left()
 
-    def must_turn_right(self):
-        return (self.height(self.right_foot + self.forward) == self.height(self.left_foot))
+    def can_turn_right(self):
+        return not self.right_foot_can_step()
     
     def turn_right(self):
         self.left_foot = self.right_foot + self.forward

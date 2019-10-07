@@ -12,6 +12,10 @@ class PathNotInAbsoluteCoordinatesException(Exception):
     pass
 
 
+def line_contains_path_string(line):
+    return line.lstrip()[:3] == 'd="'
+
+
 def find_path_string(filename):
     """
     Search for the line in the svg-file that describes the path. It is of the
@@ -25,7 +29,7 @@ def find_path_string(filename):
     with open(filename) as f:
         line = f.readline()
         while line:
-            if line.lstrip()[:3] == 'd="': # Path string starts with 'd="'
+            if line_contains_path_string(line): 
                 return line.lstrip()
             line = f.readline()
     raise PathNotFoundException()
@@ -38,7 +42,7 @@ def extract_control_points(path_string_words):
                         'M', 'L', 'S', 'C'
                 or coordinate pairs in string form.
 
-    returns: curves
+    returns: control_points
                 A list containing all information needed to make each curve individually,
                 e.g.
                         [...
@@ -48,15 +52,17 @@ def extract_control_points(path_string_words):
                 The first control point 'x0,y0' is always the last control point of the
                 previous curve.
     """
-    control_points = []
-    curve_type = 'M'
+    curve_type = path_string_words.pop(0)
+    P_start = path_string_words.pop(0)
+    control_points = [[curve_type, P_start]]
+
     while len(path_string_words) != 0:
         if len(path_string_words[0]) == 1:
             curve_type = path_string_words.pop(0)
         else:
             if curve_type in ['M', 'L']:
                 P1 = path_string_words.pop(0)
-                control_points.append([curve_type, P1])
+                control_points.append(['L', P1])
             elif curve_type == 'S':
                 P1 = path_string_words.pop(0)
                 P2 = path_string_words.pop(0)

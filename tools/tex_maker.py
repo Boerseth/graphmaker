@@ -23,7 +23,7 @@ def number_to_scientific_latex(number):
 
     
 
-def latex_simplified_formula(a,b,c,d,n_cols):
+def latex_simplified_formula(a,b,c,d):
     assert len(a) == len(b) and len(a) == len(c) and len(a) == len(d)
     N = len(a)
     begin_align = "\\begin{align*}\n"

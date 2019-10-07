@@ -9,4 +9,9 @@ if __name__ == "__main__":
     output_filepath = sys.argv[2]
     order = int(sys.argv[3])
 
-    make_graph(filepath, output_filepath, order)
+    if len(sys.argv) == 5:
+        scale = eval(sys.argv[4])
+    else:
+        scale = 1
+
+    make_graph(filepath, output_filepath, order, scale)

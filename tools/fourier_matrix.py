@@ -9,29 +9,28 @@ class Fourier_matrix:
         self.COST = self.COS.T
         self.SINT = self.SIN.T
     
+
     def make_coeffs(self, f):
+        assert len(f) == self.M
         a = self.COS.dot(f) / self.M # Integral, divide by M to normalise
         b = self.SIN.dot(f) / self.M
         return a, b
 
-    def make_approximation(self, a, b, n):
-        if n >= self.N:
-            return self.COST.dot(a) + self.SINT.dot(b)
-        else:
-            siev = np.array([1.0]*n + [0.0]*(self.N - n))
-            a_sieved = a * siev
-            b_sieved = b * siev
-            return self.COST.dot(a_sieved) + self.SINT.dot(b_sieved)
 
-    def make_smooth_approximation(self, a, b, n_continuous):
-        if n_continuous >= self.N:
-            siev = np.array([1.0]*self.N)
-        elif n_continuous < 0:
-            siev = np.array([0.0]*self.N)
+    def make_approximation(self, a, b, n):
+        assert n <= self.N
+
+        if n == self.N:
+            sieve = np.array([1.0]*self.N)
+        elif n < 0:
+            sieve = np.array([0.0]*self.N)
         else:
-            n = int(n_continuous)
-            t = n_continuous % 1
-            siev = np.array([1.0]*n + [t] + [0.0]*(self.N - n - 1))
-        a_sieved = a * siev
-        b_sieved = b * siev
-        return self.COST.dot(a_sieved) + self.SINT.dot(b_sieved)
+            n = int(n)
+            t = n % 1
+            sieve = np.array([1.0]*n + [t] + [0.0]*(self.N - n - 1))
+
+        a_sieved = a * sieve
+        b_sieved = b * sieve
+        f_appr = self.COST.dot(a_sieved) + self.SINT.dot(b_sieved)
+
+        return f_appr
