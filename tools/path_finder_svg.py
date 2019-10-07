@@ -12,10 +12,6 @@ class PathNotInAbsoluteCoordinatesException(Exception):
     pass
 
 
-def line_contains_path_string(line):
-    return line.lstrip()[:3] == 'd="'
-
-
 def find_path_string(filename):
     """
     Search for the line in the svg-file that describes the path. It is of the
@@ -29,7 +25,7 @@ def find_path_string(filename):
     with open(filename) as f:
         line = f.readline()
         while line:
-            if line_contains_path_string(line): 
+            if line.lstrip().startswith('d="'): 
                 return line.lstrip()
             line = f.readline()
     raise PathNotFoundException()
