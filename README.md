@@ -31,7 +31,7 @@ Additionally, one may apply the optional fourth decimal-number argument `<scalin
 ```
 $ python3 graph_maker.py <input-file> <output-file> <fourier-order> <scaling-factor>
 ```
-which scales the number of sample points along the curve up or down from the default. A scaling factor smaller than 1 will lead to quicker run times, whereas numbers larger than 1 may result in better detail.
+which scales the number of sample points along the curve up or down from the default, which is 1. A scaling factor smaller than 1 will lead to quicker run times, whereas numbers larger than 1 may result in better detail.
 
 
 
@@ -65,7 +65,7 @@ After this you should have a black/white picture that is black on the outside of
 ```
 $ python3 graph_maker.py hybrida.png hybrida_graph.png 100 0.5
 ```
-This has the effect of reducing the number of sample points around the curve, which means the numberical Fourier transformation will be far less computationally costly. This works fine, so long as you do not get too greedy and scale the number of samples down so far that it becomes lower than the order of the Fourier series. But you should be running into issues with the aesthetics of the graph long before this becomes a concern.
+This has the effect of reducing the number of sample points around the curve, which means the numerical Fourier transformation will be far less computationally costly. This works fine, so long as you do not get too greedy and scale the number of samples down so far that it becomes lower than the order of the Fourier series. But you should be running into issues with the aesthetics of the graph long before this becomes a concern.
 
 ### SVG - Drawing a path in InkScape
 This will perhaps lead to the most elegant graphs. Using svg-paths is not as restrictive as the black/white drawings detailed above, because there is nothing preventing your graph from intersecting itself in this case. The curve must still end up at its starting point and be one connected path, but other than that there aren't many limitations.
