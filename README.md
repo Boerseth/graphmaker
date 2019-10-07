@@ -16,12 +16,18 @@ Curves drawn in png-files can be made using for instance MS-Paint or PS.
 ## Typical usage
 Run the script in terminal with Python 3 as follows,
 ```
-$ python3 graph_maker.py image.png output.png 100
+$ python3 graph_maker.py <input-file> <output-file> <fourier-order>
 ```
 where
- * `image.png` is the name of the image being made into a graph
- * `output.png` is the name you want for the output file
- * `100` is the number of terms to be used in the Fourier series
+ * `<input-file>` is the name of the image being made into a graph, e.g. `image.svg`
+ * `<output-file>` is the name you want for the output file, e.g. `image_graph.png`
+ * `<fourier-order>` is the number of terms to be used in the Fourier series, e.g. `100`
+
+Additionally, one may apply the optional fourth decimal-number argument `<scaling-factor>`,
+```
+$ python3 graph_maker.py <input-file> <output-file> <fourier-order> <scaling-factor>
+```
+which scales the number of sample points along the curve up or down from the default. A scaling factor smaller than 1 will lead to quicker run times, whereas numbers larger than 1 may result in better detail.
 
 ## Requirements on the image files
 
@@ -49,11 +55,11 @@ Here is a detailed guide on drawing curves in this way:
 
 After this you should have a black/white picture that is black on the outside of the curve and white on the inside, with no islands of either colour in the other region. There should also not be any grey-tones on the border between them. If you see that there are, try using other editing software to colour these pixels either white or black.
 
-**NOTE ON PERFORMANCE**: Try not to use a picture with too high resolution. Right now, the program treats the path as x- and y-coordinates in two separate vectors, one value in each for every pixel along the border. The program finds their representation in a cosine/sine basis, using two N-by-M matrices containing cosine- and sine-values. Computing the value of this matrix can become costly if M (the length of the x- and y-vector) becomes huge, i.e. if the resolution is high.
-
-**BOTTOM LINE**: If the resolution is high, the number of pixels along the border will be large, making the x- and y-vectors long, which in turn increases the computation time.
-
-There is a fix for this planned, but for the moment, just scale down the image. Something of the order 500x500 - 1000x1000 should be fine.
+**NOTE ON PERFORMANCE**: If you are using an image with very high resolution, you may want to run the program with the optional fourth argument set to some number smaller than 1, e.g. `0.5` or `0.2`, as
+```
+$ python3 graph_maker.py hybrida.png hybrida_graph.png 100 0.5
+```
+This has the effect of reducing the number of sample points around the curve, which means the numberical Fourier transformation will be far less computationally costly. This works fine, so long as you do not get too greedy and scale the number of samples down so far that it becomes lower than the order of the Fourier series. But you should be running into issues with the aesthetics of the graph long before this becomes a concern.
 
 ### SVG - Drawing a path in InkScape
 This will perhaps lead to the most elegant graphs. Using svg-paths is not as restrictive as the black/white drawings detailed above, because there is nothing preventing your graph from intersecting itself in this case. The curve must still end up at its starting point and be one connected path, but other than that there aren't many limitations.
@@ -86,16 +92,8 @@ Now, simply run the script as described above with the filename you chose for th
 
 ## LaTeX code
 The program produces two files containing LaTeX code describing the graph mathematically. The two files,
-1. `latex_simple.tex`: contains code for a simpler set of equations that will generate the graph (left below)
+1. `latex_simple.tex`: contains code for a simple set of equations that will generate the graph (left below)
+1. `latex_simplest.tex`: contains code for an even simpler set of equations that will generate the graph (middle)
 1. `latex_complete.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
 
 <img src="./example_pictures/LaTeX-simple.png" height="300"><img src="./example_pictures/LaTeX-complete.png" height="300">
-
-
-## Future work
-The plan to fix the resolution dependence for png input is as follows:
-* Make a linear spline *s*(*t*) out of the path generated from the image, 0 ≤ *t* < 1
-* Sample the spline at some low rate, like at *n*=1000 equidistant points
-* Make another linear spline *s_n*(*t*) form these *n* samples, and compute the error *e* = ∫(*s-s_n*)²d*t*
-	* If *e* is sufficiently small (to be defined), accept the sample of $n$ points that was made
-	* Else, increase *n* by some factor and try again.
