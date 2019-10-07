@@ -1,17 +1,21 @@
 # Graph-maker
 This program takes an image of a curve, either svg or png, and approximates it by Fourier series. The program outputs a picture of the graph and the equations of the approximation in LaTeX code. 
 
+
+
 ## Getting started
-Alls ya need is the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them in a folder with the image you want to graphify, and follow the below instructions.
+The parts of this repo that do all the work are the file `graph_maker.py` and the folder named `tools`, which contains the bulk of the code. Put them in a folder with the image you want to graphify, and follow the below instructions.
 
 The rest of the files you can safely delete.
 
 ### Prerequisites
-You will need to have Python and the packages Numpy, matplotlib, and PIL installed in order to run the python script.
+Alls ya need to run the script is to have Python installed along with the packages Numpy, matplotlib, and PIL.
 
-Paths saved in svg-format can be drawn with programs like InkScape.
+Curves drawn in png-files can be made using for instance MS-Paint, GIMP, or PhotoShop.
 
-Curves drawn in png-files can be made using for instance MS-Paint or PS.
+Paths saved in svg-format can be drawn with vector-graphics programs like InkScape.
+
+
 
 ## Typical usage
 Run the script in terminal with Python 3 as follows,
@@ -28,6 +32,8 @@ Additionally, one may apply the optional fourth decimal-number argument `<scalin
 $ python3 graph_maker.py <input-file> <output-file> <fourier-order> <scaling-factor>
 ```
 which scales the number of sample points along the curve up or down from the default. A scaling factor smaller than 1 will lead to quicker run times, whereas numbers larger than 1 may result in better detail.
+
+
 
 ## Requirements on the image files
 
@@ -89,6 +95,8 @@ Here is how you might go about doing this:
 8. Save the curve as an svg-file.
 
 Now, simply run the script as described above with the filename you chose for the svg file.
+
+
 
 ## LaTeX code
 The program produces two files containing LaTeX code describing the graph mathematically. The two files,
