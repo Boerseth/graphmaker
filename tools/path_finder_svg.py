@@ -25,8 +25,9 @@ def find_path_string(filename):
     with open(filename) as f:
         line = f.readline()
         while line:
-            if line.lstrip().startswith('d="'): 
-                return line.lstrip()
+            unindented_line = line.lstrip()
+            if unindented_line.startswith('d="'): 
+                return unindented_line
             line = f.readline()
     raise PathNotFoundException()
 
