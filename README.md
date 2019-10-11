@@ -31,7 +31,7 @@ Additionally, one may apply the optional fourth decimal-number argument `<scalin
 ```
 $ python3 graph_maker.py <input-file> <output-file> <fourier-order> <scaling-factor>
 ```
-which scales the number of sample points along the curve up or down from the default, which is 1. A scaling factor smaller than 1 will lead to quicker run times, whereas numbers larger than 1 may result in better detail.
+which scales the number of sample points along the curve up or down. By default, the number of sample points is decided by the resolution of the image, in the png-input case, or the number of Bezier curves in the path, for the svg-input case. A scaling factor smaller than 1 will reduce the number of sample points proportionally and lead to quicker run times, whereas numbers larger than 1 may result in better detail.
 
 
 
@@ -99,7 +99,7 @@ Now, simply run the script as described above with the filename you chose for th
 
 
 ## LaTeX code
-The program produces two files containing LaTeX code describing the graph mathematically. The two files,
+The program produces three files containing LaTeX code describing the graph mathematically. The two files,
 1. `latex_simple.tex`: contains code for a simple set of equations that will generate the graph (left below)
 1. `latex_simplest.tex`: contains code for an even simpler set of equations that will generate the graph (middle)
 1. `latex_complete.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums (right below)
