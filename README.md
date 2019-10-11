@@ -104,7 +104,7 @@ The program produces three files containing LaTeX code describing the graph math
 <img src="./example_pictures/LaTeX-simple.png" height="400">
 
 2. `latex_simplest.tex`: contains code for an even simpler set of equations that will generate the graph 
-<img src="./example_pictures/LaTeX-simplest.png" height="200">
+<img src="./example_pictures/LaTeX-simplest.png" height="400">
 
 3. `latex_complete.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums 
-<img src="./example_pictures/LaTeX-complete.png" height="200">
+<img src="./example_pictures/LaTeX-complete.png" height="400">
