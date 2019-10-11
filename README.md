@@ -108,3 +108,8 @@ The program produces three files containing LaTeX code describing the graph math
 
 3. `latex_complete.tex`: contains the complete equations that generate the graph, without relying on the Sigma-notation for sums 
 <img src="./example_pictures/LaTeX-complete.png" height="400">
+
+
+## Future work
+* Add behaviour: Let the output graph be in the complex plane, and the LaTeX code be a sum over complex exponentials with complex coefficients with *n* from -*N* to *N*.
+* As the program becomes more and more feature rich, decide on a way to still make it convenient and simple to learn for beginners.
